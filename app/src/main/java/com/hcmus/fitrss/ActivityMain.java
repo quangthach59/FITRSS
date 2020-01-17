@@ -1,6 +1,7 @@
 package com.hcmus.fitrss;
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.widget.Toast;
 
 import androidx.annotation.LayoutRes;
@@ -34,14 +35,19 @@ public class ActivityMain extends AppCompatActivity implements SwipeRefreshLayou
         int margin = (getResources().getDimensionPixelSize(R.dimen.margin_8dp));
         RecyclerView.ItemDecoration decoration = new GridSpacingItemDecoration(column, margin, true);
         binding.rvFeed.addItemDecoration(decoration);
-        //binding.rvFeed.addItemDecoration(new DividerItemDecoration(binding.rvFeed.getContext(), DividerItemDecoration.VERTICAL));
-
         binding.rvFeed.setAdapter(adapterFeed);
-        adapterFeed.refresh();
+        binding.swipeLayout.setOnRefreshListener(this);
+
         adapterFeed.setOnItemClickedListener(new OnItemClickedListener() {
             @Override
             public void onItemClick(int index) {
                 Toast.makeText(ActivityMain.this, Integer.toString(index), Toast.LENGTH_SHORT).show();
+            }
+        });
+        new Handler().post(new Runnable() {
+            @Override
+            public void run() {
+                adapterFeed.fetch();
             }
         });
     }

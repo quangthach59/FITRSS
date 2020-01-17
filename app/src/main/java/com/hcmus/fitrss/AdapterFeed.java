@@ -3,6 +3,7 @@ package com.hcmus.fitrss;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
+import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -65,10 +66,16 @@ public class AdapterFeed extends RecyclerView.Adapter<AdapterFeed.FeedViewHolder
 
     @Override
     public void onBindViewHolder(final @NonNull FeedViewHolder holder, final int position) {
-        FeedItem item = items.get(position);
-        UtilsTextView.setText(holder.binding.itemTitle, item.getTitle());
-        UtilsTextView.setText(holder.binding.itemLink, item.getLink());
-        UtilsTextView.setText(holder.binding.itemPublicDate, item.getPublicDate());
+        final FeedItem item = items.get(position);
+        new Handler().post(new Runnable() {
+            @Override
+            public void run() {
+                UtilsTextView.setText(holder.binding.itemTitle, item.getTitle());
+                UtilsTextView.setText(holder.binding.itemLink, item.getLink());
+                UtilsTextView.setText(holder.binding.itemPublicDate, item.getPublicDate());
+            }
+        });
+
         //UtilsTextView.setText(holder.binding.itemDescription, item.getDescription());
         holder.binding.itemDescription.setVisibility(View.GONE);
         holder.binding.view.setOnClickListener(new View.OnClickListener() {
@@ -90,26 +97,31 @@ public class AdapterFeed extends RecyclerView.Adapter<AdapterFeed.FeedViewHolder
     }
 
     public void refresh() {
+        items.clear();
+        notifyDataSetChanged();
+        fetch();
+    }
+
+    public void fetch() {
         new DownloadRssFeed().execute();
     }
 
-    public class DownloadRssFeed extends AsyncTask<String, Void, ArrayList<FeedItem>> {
-        private ProgressDialog dialog;
+    public class DownloadRssFeed extends AsyncTask<String, FeedItem, ArrayList<FeedItem>> {
+        //private ProgressDialog dialog;
 
-        public DownloadRssFeed(){
-            dialog = new ProgressDialog(context);
+        public DownloadRssFeed() {
+            //dialog = new ProgressDialog(context);
         }
 
         protected void onPreExecute() {
-            this.dialog.setMessage("Please wait\nReading RSS feed ...");
-            this.dialog.setCancelable(false);
-            this.dialog.show();
+            //this.dialog.setMessage("Please wait\nReading RSS feed ...");
+            //this.dialog.setCancelable(false);
+            //this.dialog.show();
         }
 
         @Override
         protected ArrayList<FeedItem> doInBackground(String... params) {
             ArrayList<FeedItem> newsList = new ArrayList<>();
-            this.dialog.setMessage("Please wait\nReading RSS feed");
             try {
                 URL url = new URL("https://www.fit.hcmus.edu.vn/vn/feed.aspx");
                 URLConnection connection;
@@ -127,7 +139,8 @@ public class AdapterFeed extends RecyclerView.Adapter<AdapterFeed.FeedViewHolder
                     if ((itemNodes != null) && (itemNodes.getLength() > 0)) {
                         for (int i = 0; i < itemNodes.getLength(); i++) {
                             Element entry = (Element) itemNodes.item(i);
-                            newsList.add(FeedItem.Converter.from(entry));
+                            //newsList.add(FeedItem.Converter.from(entry));
+                            publishProgress(FeedItem.Converter.from(entry));
                         }
                     }
                 }
@@ -139,11 +152,20 @@ public class AdapterFeed extends RecyclerView.Adapter<AdapterFeed.FeedViewHolder
         }
 
         @Override
+        protected void onProgressUpdate(FeedItem... values) {
+            super.onProgressUpdate(values);
+            items.add(values[0]);
+            int index = items.size() - 1;
+            if (index >= 0)
+                notifyItemInserted(index);
+        }
+
+        @Override
         protected void onPostExecute(ArrayList<FeedItem> result) {
             super.onPostExecute(result);
-            items = result;
-            notifyDataSetChanged();
-            dialog.dismiss();
+            //items = result;
+            //notifyDataSetChanged();
+            //dialog.dismiss();
         }
     }
 }

@@ -11,11 +11,16 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:padding="@dimen/margin_5dp"
-            android:background="@color/colorWhite">
+            android:background="@color/colorWhite"
+            >
             <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/itemTitle"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
+                android:layout_height="wrap_content"
+                android:textColor="@color/colorBlack"
+                android:textSize="@dimen/text_size_18sp"
+                android:textStyle="bold" />
+<!--            android:text="[CQ] DSSV khóa 2016 đăng ký thực hiện KLTN/TTTN/DATN đợt 2 năm học 2019-2020"-->
             <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/itemLink"
                 android:layout_width="wrap_content"
@@ -23,7 +28,9 @@
             <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/itemPublicDate"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
+                android:layout_height="wrap_content"
+                android:layout_gravity="end" />
+<!--            android:text="Thu, 16 Jan 2020 18:10:51 GMT"-->
             <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/itemDescription"
                 android:layout_width="wrap_content"
