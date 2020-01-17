@@ -1,6 +1,5 @@
-package com.hcmus.fitrss;
+package com.hcmus.fitrss.adapters;
 
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Handler;
@@ -12,11 +11,13 @@ import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.android.volley.RequestQueue;
-import com.android.volley.toolbox.Volley;
+import com.hcmus.fitrss.OnItemClickedListener;
+import com.hcmus.fitrss.R;
+import com.hcmus.fitrss.config.AppConfig;
 import com.hcmus.fitrss.databinding.FeedItemBinding;
 import com.hcmus.fitrss.feed.FeedItem;
 import com.hcmus.fitrss.utils.UtilsTextView;
+import com.hcmus.fitrss.utils.UtilsTime;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -27,6 +28,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
+import java.util.Date;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -71,13 +73,15 @@ public class AdapterFeed extends RecyclerView.Adapter<AdapterFeed.FeedViewHolder
             @Override
             public void run() {
                 UtilsTextView.setText(holder.binding.itemTitle, item.getTitle());
-                UtilsTextView.setText(holder.binding.itemLink, item.getLink());
-                UtilsTextView.setText(holder.binding.itemPublicDate, item.getPublicDate());
+                //UtilsTextView.setText(holder.binding.itemLink, item.getLink());
+                //UtilsTextView.setText(holder.binding.itemPublicDate, item.getPublicDate());
+                UtilsTextView.setText(holder.binding.publicTime, UtilsTime.toFormat(item.getPublicDate(), AppConfig.DATE_TIME_FORMAT_SHORT));
             }
         });
 
         //UtilsTextView.setText(holder.binding.itemDescription, item.getDescription());
         holder.binding.itemDescription.setVisibility(View.GONE);
+        holder.binding.itemLink.setVisibility(View.GONE);
         holder.binding.view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -100,17 +104,20 @@ public class AdapterFeed extends RecyclerView.Adapter<AdapterFeed.FeedViewHolder
         items.clear();
         notifyDataSetChanged();
         fetch();
+
     }
 
     public void fetch() {
-        new DownloadRssFeed().execute();
+        new DownloadRssFeed(this).execute();
     }
 
-    public class DownloadRssFeed extends AsyncTask<String, FeedItem, ArrayList<FeedItem>> {
+    public static class DownloadRssFeed extends AsyncTask<String, FeedItem, ArrayList<FeedItem>> {
         //private ProgressDialog dialog;
+        private AdapterFeed adapter;
 
-        public DownloadRssFeed() {
+        public DownloadRssFeed(AdapterFeed adapterFeed) {
             //dialog = new ProgressDialog(context);
+            this.adapter = adapterFeed;
         }
 
         protected void onPreExecute() {
@@ -123,7 +130,7 @@ public class AdapterFeed extends RecyclerView.Adapter<AdapterFeed.FeedViewHolder
         protected ArrayList<FeedItem> doInBackground(String... params) {
             ArrayList<FeedItem> newsList = new ArrayList<>();
             try {
-                URL url = new URL("https://www.fit.hcmus.edu.vn/vn/feed.aspx");
+                URL url = new URL(AppConfig.RSS_FEED_ADDRESS);
                 URLConnection connection;
                 connection = url.openConnection();
                 HttpURLConnection httpConnection = (HttpURLConnection) connection;
@@ -139,7 +146,6 @@ public class AdapterFeed extends RecyclerView.Adapter<AdapterFeed.FeedViewHolder
                     if ((itemNodes != null) && (itemNodes.getLength() > 0)) {
                         for (int i = 0; i < itemNodes.getLength(); i++) {
                             Element entry = (Element) itemNodes.item(i);
-                            //newsList.add(FeedItem.Converter.from(entry));
                             publishProgress(FeedItem.Converter.from(entry));
                         }
                     }
@@ -154,17 +160,15 @@ public class AdapterFeed extends RecyclerView.Adapter<AdapterFeed.FeedViewHolder
         @Override
         protected void onProgressUpdate(FeedItem... values) {
             super.onProgressUpdate(values);
-            items.add(values[0]);
-            int index = items.size() - 1;
+            adapter.items.add(values[0]);
+            int index = adapter.items.size() - 1;
             if (index >= 0)
-                notifyItemInserted(index);
+                adapter.notifyItemInserted(index);
         }
 
         @Override
         protected void onPostExecute(ArrayList<FeedItem> result) {
             super.onPostExecute(result);
-            //items = result;
-            //notifyDataSetChanged();
             //dialog.dismiss();
         }
     }

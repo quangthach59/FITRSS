@@ -8,12 +8,13 @@ import androidx.annotation.LayoutRes;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
-import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import com.hcmus.fitrss.adapters.AdapterFeed;
 import com.hcmus.fitrss.databinding.ActivityMainBinding;
+import com.hcmus.fitrss.decorators.GridSpacingItemDecoration;
 
 public class ActivityMain extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener {
     private ActivityMainBinding binding;
@@ -22,13 +23,14 @@ public class ActivityMain extends AppCompatActivity implements SwipeRefreshLayou
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        @LayoutRes int layoutId = R.layout.activity_main;
+        @LayoutRes
+        int layoutId = R.layout.activity_main;
         setContentView(layoutId);
         binding = DataBindingUtil.setContentView(this, layoutId);
         createComponent();
     }
 
-    private void createComponent(){
+    private void createComponent() {
         adapterFeed = new AdapterFeed(this);
         binding.rvFeed.setLayoutManager(new LinearLayoutManager(this));
         int column = 1;
@@ -56,5 +58,6 @@ public class ActivityMain extends AppCompatActivity implements SwipeRefreshLayou
     public void onRefresh() {
         adapterFeed.refresh();
         binding.swipeLayout.setRefreshing(false);
+
     }
 }

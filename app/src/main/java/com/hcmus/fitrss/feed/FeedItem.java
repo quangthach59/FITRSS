@@ -1,9 +1,15 @@
 package com.hcmus.fitrss.feed;
 
+import com.hcmus.fitrss.config.AppConfig;
+import com.hcmus.fitrss.utils.UtilsTime;
+
 import org.w3c.dom.Element;
 
+import java.util.Date;
+
 public class FeedItem {
-    private String title, link, publicDate, description;
+    private String title, link, description;
+    private Date publicDate;
 
     public String getTitle() {
         return title;
@@ -13,7 +19,7 @@ public class FeedItem {
         return link;
     }
 
-    public String getPublicDate() {
+    public Date getPublicDate() {
         return publicDate;
     }
 
@@ -34,7 +40,7 @@ public class FeedItem {
             return this;
         }
 
-        public Builder setPublicDate(String publicDate) {
+        public Builder setPublicDate(Date publicDate) {
             item.publicDate = publicDate;
             return this;
         }
@@ -57,12 +63,13 @@ public class FeedItem {
                     .getFirstChild().getNodeValue();
             String pubDate = element.getElementsByTagName("pubDate").item(0)
                     .getFirstChild().getNodeValue();
+            Date dateTime = UtilsTime.parse(pubDate, AppConfig.RSS_DATE_TIME_FORMAT);
             String description = element.getElementsByTagName("description").item(0)
                     .getLastChild().getNodeValue();
             return new FeedItem.Builder()
                     .setTitle(title)
                     .setLink(link)
-                    .setPublicDate(pubDate)
+                    .setPublicDate(dateTime)
                     .setDescription(description)
                     .build();
         }
