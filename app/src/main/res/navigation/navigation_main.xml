@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/navigation_main"
+    app:startDestination="@id/fragment_news">
+    <fragment
+        android:id="@+id/fragment_news"
+        android:name="com.hcmus.fitrss.ui.news.FragmentNews"
+        tools:layout="@layout/fragment_news">
+        <action
+            android:id="@+id/action_view_detail"
+            app:destination="@id/fragment_detail" />
+    </fragment>
+    <dialog
+        android:id="@+id/fragment_detail"
+        android:name="com.hcmus.fitrss.ui.detail.FragmentDetail"
+        tools:layout="@layout/fragment_detail" />
+</navigation>

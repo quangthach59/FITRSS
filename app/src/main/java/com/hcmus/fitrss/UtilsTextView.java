@@ -1,4 +1,4 @@
-package com.hcmus.fitrss.utils;
+package com.hcmus.fitrss;
 
 import android.os.Build;
 import android.text.Html;

@@ -1,7 +1,7 @@
-package com.hcmus.fitrss.feed;
+package com.hcmus.fitrss.model;
 
-import com.hcmus.fitrss.config.AppConfig;
-import com.hcmus.fitrss.utils.UtilsTime;
+import com.hcmus.fitrss.AppConfig;
+import com.hcmus.fitrss.UtilsTime;
 
 import org.w3c.dom.Element;
 

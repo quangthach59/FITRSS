@@ -1,6 +1,4 @@
-package com.hcmus.fitrss.utils;
-
-import com.hcmus.fitrss.config.AppConfig;
+package com.hcmus.fitrss;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;

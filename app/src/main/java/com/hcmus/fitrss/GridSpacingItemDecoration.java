@@ -1,4 +1,4 @@
-package com.hcmus.fitrss.decorators;
+package com.hcmus.fitrss;
 
 import android.graphics.Rect;
 import android.view.View;

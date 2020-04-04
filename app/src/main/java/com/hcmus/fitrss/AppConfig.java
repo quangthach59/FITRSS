@@ -1,4 +1,4 @@
-package com.hcmus.fitrss.config;
+package com.hcmus.fitrss;
 
 public class AppConfig {
     public static final String RSS_FEED_ADDRESS = "https://www.fit.hcmus.edu.vn/vn/feed.aspx";
