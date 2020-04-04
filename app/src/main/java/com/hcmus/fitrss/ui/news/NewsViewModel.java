@@ -2,6 +2,7 @@ package com.hcmus.fitrss.ui.news;
 
 import android.os.AsyncTask;
 
+import androidx.annotation.Nullable;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
@@ -24,6 +25,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 
 public class NewsViewModel extends ViewModel {
     private MutableLiveData<ArrayList<FeedItem>> model = new MutableLiveData<>(new ArrayList<>());
+    private MutableLiveData<Integer> indexModel = new MutableLiveData<>(0);
 
     public NewsViewModel() {
         fetch();
@@ -40,6 +42,31 @@ public class NewsViewModel extends ViewModel {
 
     public void setData(ArrayList<FeedItem> items) {
         this.model.setValue(items);
+    }
+
+    public void select(int index) {
+        this.indexModel.setValue(index);
+    }
+
+    private int getIndex() {
+        return this.indexModel.getValue() != null ? this.indexModel.getValue() : -1;
+    }
+
+    public LiveData<Integer> getIndexModel() {
+        return this.indexModel;
+    }
+
+    @Nullable
+    public FeedItem getSelectedItem() {
+        int index = getIndex();
+        if (index == -1) {
+            return null;
+        }
+        ArrayList<FeedItem> items = getItems();
+        if (index < items.size()) {
+            return items.get(index);
+        }
+        return null;
     }
 
     public void fetch() {

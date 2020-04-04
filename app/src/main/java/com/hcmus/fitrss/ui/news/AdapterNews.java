@@ -1,9 +1,7 @@
 package com.hcmus.fitrss.ui.news;
 
 import android.content.Context;
-import android.os.Handler;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
@@ -11,11 +9,11 @@ import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.hcmus.fitrss.AppConfig;
-import com.hcmus.fitrss.model.FeedItem;
 import com.hcmus.fitrss.OnItemClickedListener;
 import com.hcmus.fitrss.UtilsTextView;
 import com.hcmus.fitrss.UtilsTime;
 import com.hcmus.fitrss.databinding.FeedItemBinding;
+import com.hcmus.fitrss.model.FeedItem;
 
 import java.util.ArrayList;
 
@@ -41,18 +39,9 @@ public class AdapterNews extends RecyclerView.Adapter<AdapterNews.NewsViewHolder
             if (listener != null)
                 listener.onItemClick(position);
         });
-
         final FeedItem item = items.get(position);
-        new Handler().post(() -> {
-            UtilsTextView.setText(holder.binding.itemTitle, item.getTitle());
-            //UtilsTextView.setText(holder.binding.itemLink, item.getLink());
-            //UtilsTextView.setText(holder.binding.itemPublicDate, item.getPublicDate());
-            UtilsTextView.setText(holder.binding.publicTime, UtilsTime.toFormat(item.getPublicDate(), AppConfig.DATE_TIME_FORMAT_SHORT));
-        });
-
-        //UtilsTextView.setText(holder.binding.itemDescription, item.getDescription());
-        holder.binding.itemDescription.setVisibility(View.GONE);
-        holder.binding.itemLink.setVisibility(View.GONE);
+        holder.binding.setItem(item);
+        UtilsTextView.setText(holder.binding.publicTime, UtilsTime.toFormat(item.getPublicDate(), AppConfig.DATE_TIME_FORMAT_SHORT));
     }
 
     @Override
@@ -77,7 +66,7 @@ public class AdapterNews extends RecyclerView.Adapter<AdapterNews.NewsViewHolder
         this.listener = onItemClickedListener;
     }
 
-    public void update(ArrayList<FeedItem> updatedList){
+    public void update(ArrayList<FeedItem> updatedList) {
         DiffUtil.Callback callback = new DiffUtil.Callback() {
             @Override
             public int getOldListSize() {
@@ -105,5 +94,4 @@ public class AdapterNews extends RecyclerView.Adapter<AdapterNews.NewsViewHolder
         this.items.addAll(updatedList);
         diffResult.dispatchUpdatesTo(this);
     }
-
 }

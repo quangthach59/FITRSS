@@ -10,15 +10,19 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.hcmus.fitrss.R;
+import com.hcmus.fitrss.UtilsTextView;
 import com.hcmus.fitrss.databinding.FragmentDetailBinding;
+import com.hcmus.fitrss.model.FeedItem;
+import com.hcmus.fitrss.ui.news.NewsViewModel;
 
 public class FragmentDetail extends BottomSheetDialogFragment {
     private AppCompatActivity activity;
     private FragmentDetailBinding binding;
-
+    private NewsViewModel viewModel;
 
     @Override
     public void onAttach(@NonNull Context context) {
@@ -34,10 +38,6 @@ public class FragmentDetail extends BottomSheetDialogFragment {
         this.activity = null;
     }
 
-//    public NavController getNavController() {
-//        return NavHostFragment.findNavController(this);
-//    }
-
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -48,5 +48,13 @@ public class FragmentDetail extends BottomSheetDialogFragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        viewModel = new ViewModelProvider(activity).get(NewsViewModel.class);
+
+        viewModel.getIndexModel().observe(getViewLifecycleOwner(), integer -> {
+            FeedItem item = viewModel.getSelectedItem();
+            if (item != null){
+                UtilsTextView.setText(binding.description, item.getDescription());
+            }
+        });
     }
 }

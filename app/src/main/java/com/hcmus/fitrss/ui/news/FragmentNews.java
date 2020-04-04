@@ -61,7 +61,9 @@ public class FragmentNews extends Fragment implements SwipeRefreshLayout.OnRefre
         binding.rvNews.addItemDecoration(new GridSpacingItemDecoration(column, margin, true));
 
         adapterNews = new AdapterNews(activity);
-        adapterNews.setOnItemClickedListener(index -> getNavController().navigate(R.id.action_view_detail));
+        adapterNews.setOnItemClickedListener(index -> {
+            viewModel.select(index);
+            getNavController().navigate(R.id.action_view_detail);});
 
         viewModel.getModel().observe(getViewLifecycleOwner(), feedItems -> adapterNews.update(feedItems));
         viewModel.fetch();
